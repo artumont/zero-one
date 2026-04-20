@@ -21,7 +21,7 @@ pub fn ensure_data_directory() -> String {
         let home = std::env::var("HOME").expect("HOME environment variable not set");
         let data_dir = format!("{}/.local/share/{}", home, APP_NAME);
         std::fs::create_dir_all(&data_dir).expect("Failed to create data directory");
-        return data_dir;
+        data_dir
     }
 }
 
