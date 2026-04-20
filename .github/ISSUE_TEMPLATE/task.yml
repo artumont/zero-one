@@ -1,0 +1,32 @@
+name: General Task
+description: Track a roadmap item or general development task
+title: "[PREFIX] <short description>"
+body:
+  - type: input
+    id: prefix
+    attributes:
+      label: Title prefix
+      description: Use a bracketed prefix from the roadmap (e.g., [CORE], [UI], [PACKAGING]).
+      placeholder: "[CORE]"
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Task Summary
+      description: Describe the task or roadmap item.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: List the criteria for completion.
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Additional implementation details or related issues.

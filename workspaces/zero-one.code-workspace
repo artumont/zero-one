@@ -1,6 +1,9 @@
 {
 	"folders": [
 		{
+			"path": "../.github"
+		},
+		{
 			"path": "../packages/zero-one"
 		},
 		{
@@ -8,7 +11,7 @@
 		},
 		{
 			"path": "../scripts"
-		}
+		},
 	],
 	"settings": {}
 }

@@ -1,0 +1,72 @@
+name: Bug Report
+description: Create a report to help us improve
+title: "[BUG] <short description>"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide a clear and concise description of the bug.
+  - type: input
+    id: prefix
+    attributes:
+      label: Title prefix
+      description: Use a bracketed prefix from the roadmap (e.g., [UI], [CORE], [ACP]).
+      placeholder: "[UI]"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Current Behavior
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction Steps
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or Screenshots
+      description: Paste any relevant logs or attach screenshots of the issue.
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: Which package does this bug affect?
+      options:
+        - packages/zero-one
+        - packages/ui
+        - both
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Info
+      description: OS version, Rust version, Node version, etc.
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct.
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

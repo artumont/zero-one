@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: GitHub Copilot
+    url: https://github.com/features/copilot
+    about: Ask Copilot for help or questions
+  - name: Roadmap
+    url: https://github.com/artumont/zero-one/blob/dev/docs/ROADMAP.md
+    about: View the Zero-One project roadmap
