@@ -2,6 +2,18 @@
 
 Use one of these bracketed prefixes at the start of your issue or pull request title. This helps our team understand the scope of the change at a glance.
 
+## Phase Related
+
+- `[PHASE_1]` - Core platform primitives, configuration, and data models.
+- `[PHASE_2]` - Agent runtime, orchestration, and tool execution.
+- `[PHASE_3]` - Model and provider access, routing, and budgeting.
+- `[PHASE_4]` - Developer interfaces, protocols, and IDE integrations.
+- `[PHASE_5]` - UI platform, views, navigation, and interaction design.
+- `[PHASE_6]` - Workflow features, sessions, projects, memory, and search.
+- `[PHASE_7]` - Quality, trust, security, permissions, and reliability.
+- `[PHASE_8]` - Packaging, release, versioning, documentation, and migrations.
+- `[PHASE_9]` - Ecosystem, integrations, community tools, and examples.
+
 ## Core Services
 
 - `[CORE]` - Shared engine logic, domain models, and workspace primitives.
