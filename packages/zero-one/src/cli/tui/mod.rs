@@ -20,5 +20,6 @@ fn app(terminal: &mut DefaultTerminal) -> std::io::Result<()> {
 /// The rendering function that draws the TUI interface. This is where you can add your widgets and layout.
 /// TODO: Replace the placeholder rendering logic with actual widgets and layout for the application.
 fn render(frame: &mut Frame) {
-    frame.render_widget("hello world", frame.area());
+    let widget = ratatui::widgets::Paragraph::new("hello world");
+    frame.render_widget(widget, frame.area());
 }

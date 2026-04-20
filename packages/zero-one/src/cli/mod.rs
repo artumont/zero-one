@@ -10,7 +10,7 @@ use std::process::ExitCode;
 /// Then, add the command to the `command_registry!` macro at the bottom of this file.
 ///
 /// ## Example:
-/// ```
+/// ```rust,no_run
 /// #[derive(Args)]
 /// pub struct Greet {
 ///     #[arg(short, long)]
@@ -25,7 +25,7 @@ use std::process::ExitCode;
 /// ```
 ///
 /// ## Definition:
-/// ```
+/// ```rust,no_run
 /// command_registry! {
 ///    Greet(Greet),
 /// }

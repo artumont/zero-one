@@ -16,8 +16,8 @@ impl StartSession {
             return ExitCode::FAILURE;
         }
         // TODO: Add session init here
-        if tui::run_tui().is_err() {
-            eprintln!("Failed to start TUI");
+        if let Err(err) = tui::run_tui() {
+            eprintln!("Failed to start TUI: {err:?}");
             return ExitCode::FAILURE;
         }
         ExitCode::SUCCESS
