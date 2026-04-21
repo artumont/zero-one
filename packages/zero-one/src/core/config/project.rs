@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 
-/// A common interface for all configuration objects in the application.
+// A common interface for all configuration objects in the application.
 // trait ConfigObject {
 //     fn get_docs(&self) -> String;
 // }
