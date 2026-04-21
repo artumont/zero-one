@@ -6,11 +6,11 @@ use serde::{Deserialize, Serialize};
 // }
 
 /// The struct that holds the application's configuration settings.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct GlobalConfig {}
 
 impl GlobalConfig {
-    pub fn create(self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn create(&self) -> Result<(), Box<dyn std::error::Error>> {
         let app_data_dir = crate::utils::ensure_data_directory();
         let config_path = app_data_dir?.join("global-config.json");
         if config_path.exists() {
@@ -20,7 +20,7 @@ impl GlobalConfig {
         Ok(())
     }
 
-    pub fn save(self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
         let config_str = serde_json::to_string(&self)?;
         let app_data_dir = crate::utils::ensure_data_directory();
         let config_path = app_data_dir?.join("global-config.json");
@@ -28,7 +28,7 @@ impl GlobalConfig {
         Ok(())
     }
 
-    pub fn load(self) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn load(&self) -> Result<Self, Box<dyn std::error::Error>> {
         let app_data_dir = crate::utils::ensure_data_directory();
         let config_path = app_data_dir?.join("global-config.json");
         if !config_path.exists() {

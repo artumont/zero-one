@@ -8,11 +8,11 @@ use serde::{Deserialize, Serialize};
 // }
 
 /// The struct that holds the project configuration settings.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ProjectConfig {}
 
 impl ProjectConfig {
-    pub fn create(self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn create(&self) -> Result<(), Box<dyn std::error::Error>> {
         let zero_one_dir = ensure_zero_one_dir()?;
         let config_path = zero_one_dir.join("config.json");
         if config_path.exists() {
@@ -22,7 +22,7 @@ impl ProjectConfig {
         Ok(())
     }
 
-    pub fn save(self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
         let config_str = serde_json::to_string(&self)?;
         let zero_one_dir = ensure_zero_one_dir()?;
         let config_path = zero_one_dir.join("config.json");
@@ -30,7 +30,7 @@ impl ProjectConfig {
         Ok(())
     }
 
-    pub fn load(self) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn load(&self) -> Result<Self, Box<dyn std::error::Error>> {
         let zero_one_dir = ensure_zero_one_dir()?;
         let config_path = zero_one_dir.join("config.json");
         if !config_path.exists() {
