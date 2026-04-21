@@ -36,7 +36,7 @@ pub fn ensure_data_directory() -> Result<std::path::PathBuf, std::io::Error> {
             .join("share")
             .join(APP_NAME);
         std::fs::create_dir_all(&data_dir)?;
-        return Ok(data_dir);
+        Ok(data_dir)
     }
 }
 
