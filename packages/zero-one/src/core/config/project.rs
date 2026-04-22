@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{io::ErrorKind, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
 
@@ -16,7 +16,10 @@ impl ProjectConfig {
         let zero_one_dir = ensure_zero_one_dir()?;
         let config_path = zero_one_dir.join("config.json");
         if config_path.exists() {
-            return Err("Project configuration already exists.".into());
+            return Err(Box::new(std::io::Error::new(
+                ErrorKind::AlreadyExists,
+                "Global configuration already exists.",
+            )));
         }
         self.save()?;
         Ok(())
@@ -30,7 +33,7 @@ impl ProjectConfig {
         Ok(())
     }
 
-    pub fn load(&self) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn load() -> Result<Self, Box<dyn std::error::Error>> {
         let zero_one_dir = ensure_zero_one_dir()?;
         let config_path = zero_one_dir.join("config.json");
         if !config_path.exists() {

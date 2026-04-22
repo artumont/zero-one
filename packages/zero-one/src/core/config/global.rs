@@ -1,3 +1,5 @@
+use std::io::ErrorKind;
+
 use serde::{Deserialize, Serialize};
 
 // A common interface for all configuration objects in the application.
@@ -14,7 +16,10 @@ impl GlobalConfig {
         let app_data_dir = crate::utils::ensure_data_directory();
         let config_path = app_data_dir?.join("global-config.json");
         if config_path.exists() {
-            return Err("Global configuration already exists.".into());
+            return Err(Box::new(std::io::Error::new(
+                ErrorKind::AlreadyExists,
+                "Global configuration already exists.",
+            )));
         }
         self.save()?;
         Ok(())
@@ -28,7 +33,7 @@ impl GlobalConfig {
         Ok(())
     }
 
-    pub fn load(&self) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn load() -> Result<Self, Box<dyn std::error::Error>> {
         let app_data_dir = crate::utils::ensure_data_directory();
         let config_path = app_data_dir?.join("global-config.json");
         if !config_path.exists() {
