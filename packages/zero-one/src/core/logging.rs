@@ -1,4 +1,3 @@
-// src/core/logging.rs
 use log::LevelFilter;
 use std::fs;
 
@@ -12,10 +11,7 @@ pub fn init() -> Result<(), Box<dyn std::error::Error>> {
     let log_dir = crate::utils::ensure_data_directory()?.join("logs");
     fs::create_dir_all(&log_dir)?;
 
-    let log_file = log_dir.join(format!(
-        "zero-one-{}.log",
-        chrono::Local::now().format("%Y%m%d")
-    ));
+    let log_file = fern::DateBased::new(log_dir, "/zero_one-%Y-%m-%d.log");
 
     fern::Dispatch::new()
         .format(|out, message, record| {
@@ -27,8 +23,7 @@ pub fn init() -> Result<(), Box<dyn std::error::Error>> {
             ))
         })
         .level(LEVEL_FILTER)
-        .chain(std::io::stdout())
-        .chain(fern::log_file(&log_file)?)
+        .chain(log_file)
         .apply()?;
 
     Ok(())

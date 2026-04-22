@@ -19,7 +19,7 @@ impl ProjectConfig {
             log::error!("Project configuration already exists at {:?}", config_path);
             return Err(Box::new(std::io::Error::new(
                 ErrorKind::AlreadyExists,
-                "Global configuration already exists.",
+                "Project configuration already exists.",
             )));
         }
         self.save()?;
