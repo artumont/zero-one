@@ -12,6 +12,14 @@ struct Cli {
 }
 
 fn main() -> ExitCode {
+    match zero_one::core::logging::init() {
+        Ok(_) => log::info!("Logging initialized successfully"),
+        Err(err) => {
+            eprintln!("Failed to initialize logging: {err:?}");
+            return ExitCode::FAILURE;
+        }
+    }
+
     let cli = Cli::parse();
     match cli.command {
         Some(command) => command.resolve(),

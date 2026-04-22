@@ -1,5 +1,5 @@
-const APP_NAME: &str = "zero-one";
-const APP_VERSION: &str = "0.1.0";
+static APP_NAME: &str = "zero-one";
+static APP_VERSION: &str = "0.1.0";
 
 pub fn get_app_name() -> &'static str {
     APP_NAME
