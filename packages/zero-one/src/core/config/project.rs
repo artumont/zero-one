@@ -16,12 +16,14 @@ impl ProjectConfig {
         let zero_one_dir = ensure_zero_one_dir()?;
         let config_path = zero_one_dir.join("config.json");
         if config_path.exists() {
+            log::error!("Project configuration already exists at {:?}", config_path);
             return Err(Box::new(std::io::Error::new(
                 ErrorKind::AlreadyExists,
-                "Global configuration already exists.",
+                "Project configuration already exists.",
             )));
         }
         self.save()?;
+        log::debug!("Created new project configuration: {:?}", self);
         Ok(())
     }
 
@@ -30,6 +32,7 @@ impl ProjectConfig {
         let zero_one_dir = ensure_zero_one_dir()?;
         let config_path = zero_one_dir.join("config.json");
         std::fs::write(config_path, config_str)?;
+        log::debug!("Saved project configuration: {:?}", self);
         Ok(())
     }
 
@@ -37,10 +40,12 @@ impl ProjectConfig {
         let zero_one_dir = ensure_zero_one_dir()?;
         let config_path = zero_one_dir.join("config.json");
         if !config_path.exists() {
+            log::error!("Project configuration file not found at {:?}", config_path);
             return Err("Project configuration not found.".into());
         }
         let config_str = std::fs::read_to_string(config_path)?;
         let config: Self = serde_json::from_str(&config_str)?;
+        log::debug!("Loaded project configuration: {:?}", config);
         Ok(config)
     }
 }

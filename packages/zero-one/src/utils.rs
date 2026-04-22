@@ -1,5 +1,5 @@
-const APP_NAME: &str = "zero-one";
-const APP_VERSION: &str = "0.1.0";
+static APP_NAME: &str = "zero-one";
+static APP_VERSION: &str = "0.1.0";
 
 pub fn get_app_name() -> &'static str {
     APP_NAME
@@ -13,14 +13,24 @@ pub fn get_app_version() -> &'static str {
 pub fn ensure_data_directory() -> Result<std::path::PathBuf, std::io::Error> {
     #[cfg(target_os = "windows")]
     {
-        let appdata = std::env::var("APPDATA").expect("APPDATA environment variable not set");
+        let appdata = std::env::var("APPDATA").map_err(|_| {
+            std::io::Error::new(
+                std::io::ErrorKind::NotFound,
+                "APPDATA environment variable not set",
+            )
+        })?;
         let data_dir = std::path::PathBuf::from(appdata).join(APP_NAME);
         std::fs::create_dir_all(&data_dir)?;
         return Ok(data_dir);
     }
     #[cfg(target_os = "macos")]
     {
-        let home = std::env::var("HOME").expect("HOME environment variable not set");
+        let home = std::env::var("HOME").map_err(|_| {
+            std::io::Error::new(
+                std::io::ErrorKind::NotFound,
+                "HOME environment variable not set",
+            )
+        })?;
         let data_dir = std::path::PathBuf::from(home)
             .join("Library")
             .join("Application Support")
@@ -30,7 +40,12 @@ pub fn ensure_data_directory() -> Result<std::path::PathBuf, std::io::Error> {
     }
     #[cfg(target_os = "linux")]
     {
-        let home = std::env::var("HOME").expect("HOME environment variable not set");
+        let home = std::env::var("HOME").map_err(|_| {
+            std::io::Error::new(
+                std::io::ErrorKind::NotFound,
+                "HOME environment variable not set",
+            )
+        })?;
         let data_dir = std::path::PathBuf::from(home)
             .join(".local")
             .join("share")
