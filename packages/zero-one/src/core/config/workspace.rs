@@ -9,7 +9,7 @@ use crate::utils::ensure_zero_one_dir;
 //     fn get_docs(&self) -> String;
 // }
 
-/// The struct that holds the project configuration settings.
+/// The struct that holds the workspace configuration settings.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WorkspaceConfig {}
 
