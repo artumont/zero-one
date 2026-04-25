@@ -1,6 +1,8 @@
-use std::{io::ErrorKind, path::PathBuf};
+use std::io::ErrorKind;
 
 use serde::{Deserialize, Serialize};
+
+use crate::utils::ensure_zero_one_dir;
 
 // A common interface for all configuration objects in the application.
 // trait ConfigObject {
@@ -9,17 +11,20 @@ use serde::{Deserialize, Serialize};
 
 /// The struct that holds the project configuration settings.
 #[derive(Serialize, Deserialize, Debug)]
-pub struct ProjectConfig {}
+pub struct WorkspaceConfig {}
 
-impl ProjectConfig {
+impl WorkspaceConfig {
     pub fn create(&self) -> Result<(), Box<dyn std::error::Error>> {
         let zero_one_dir = ensure_zero_one_dir()?;
         let config_path = zero_one_dir.join("config.json");
         if config_path.exists() {
-            log::error!("Project configuration already exists at {:?}", config_path);
+            log::error!(
+                "Workspace configuration already exists at {:?}",
+                config_path
+            );
             return Err(Box::new(std::io::Error::new(
                 ErrorKind::AlreadyExists,
-                "Project configuration already exists.",
+                "Workspace configuration already exists.",
             )));
         }
         self.save()?;
@@ -40,21 +45,15 @@ impl ProjectConfig {
         let zero_one_dir = ensure_zero_one_dir()?;
         let config_path = zero_one_dir.join("config.json");
         if !config_path.exists() {
-            log::error!("Project configuration file not found at {:?}", config_path);
-            return Err("Project configuration not found.".into());
+            log::error!(
+                "Workspace configuration file not found at {:?}",
+                config_path
+            );
+            return Err("Workspace configuration not found.".into());
         }
         let config_str = std::fs::read_to_string(config_path)?;
         let config: Self = serde_json::from_str(&config_str)?;
         log::debug!("Loaded project configuration: {:?}", config);
         Ok(config)
     }
-}
-
-fn ensure_zero_one_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
-    let current_dir = std::env::current_dir()?;
-    let zero_one_dir = current_dir.join(".zero-one");
-    if !zero_one_dir.exists() {
-        std::fs::create_dir(&zero_one_dir)?;
-    }
-    Ok(zero_one_dir)
 }

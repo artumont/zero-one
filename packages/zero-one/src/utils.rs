@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 static APP_NAME: &str = "zero-one";
 static APP_VERSION: &str = "0.1.0";
 
@@ -10,7 +12,7 @@ pub fn get_app_version() -> &'static str {
 }
 
 /// Ensures that the application data directory exists and returns its path. If the directory does not exist, it will be created.
-pub fn ensure_data_directory() -> Result<std::path::PathBuf, std::io::Error> {
+pub fn ensure_data_directory() -> Result<PathBuf, std::io::Error> {
     #[cfg(target_os = "windows")]
     {
         let appdata = std::env::var("APPDATA").map_err(|_| {
@@ -19,7 +21,7 @@ pub fn ensure_data_directory() -> Result<std::path::PathBuf, std::io::Error> {
                 "APPDATA environment variable not set",
             )
         })?;
-        let data_dir = std::path::PathBuf::from(appdata).join(APP_NAME);
+        let data_dir = PathBuf::from(appdata).join(APP_NAME);
         std::fs::create_dir_all(&data_dir)?;
         return Ok(data_dir);
     }
@@ -31,7 +33,7 @@ pub fn ensure_data_directory() -> Result<std::path::PathBuf, std::io::Error> {
                 "HOME environment variable not set",
             )
         })?;
-        let data_dir = std::path::PathBuf::from(home)
+        let data_dir = PathBuf::from(home)
             .join("Library")
             .join("Application Support")
             .join(APP_NAME);
@@ -46,7 +48,7 @@ pub fn ensure_data_directory() -> Result<std::path::PathBuf, std::io::Error> {
                 "HOME environment variable not set",
             )
         })?;
-        let data_dir = std::path::PathBuf::from(home)
+        let data_dir = PathBuf::from(home)
             .join(".local")
             .join("share")
             .join(APP_NAME);
@@ -56,11 +58,21 @@ pub fn ensure_data_directory() -> Result<std::path::PathBuf, std::io::Error> {
 }
 
 /// Ensures that the application database file exists and returns its path. If the file does not exist, it will be created.  
-pub fn ensure_app_database() -> Result<std::path::PathBuf, std::io::Error> {
+pub fn ensure_app_database() -> Result<PathBuf, std::io::Error> {
     let data_dir = ensure_data_directory();
     let db_path = data_dir?.join("zero-one.db");
     if !db_path.exists() {
         std::fs::File::create(&db_path).expect("Failed to create database file");
     }
     Ok(db_path)
+}
+
+
+pub fn ensure_zero_one_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
+    let current_dir = std::env::current_dir()?;
+    let zero_one_dir = current_dir.join(".zero-one");
+    if !zero_one_dir.exists() {
+        std::fs::create_dir(&zero_one_dir)?;
+    }
+    Ok(zero_one_dir)
 }
