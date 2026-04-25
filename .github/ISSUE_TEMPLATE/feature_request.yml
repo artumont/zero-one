@@ -7,6 +7,12 @@ body:
     attributes:
       value: |
         Before opening a feature request, please search existing issues to ensure it hasn't already been suggested.
+
+        Helpful references:
+        - Roadmap: https://github.com/artumont/zero-one/blob/dev/docs/ROADMAP.md
+        - Upstream OpenCode README: https://github.com/opencode-ai/opencode
+        - Tauri docs: https://v2.tauri.app/
+        - Vue docs: https://vuejs.org/guide/introduction.html
   - type: input
     id: prefix
     attributes:
@@ -19,7 +25,7 @@ body:
     id: problem
     attributes:
       label: Problem
-      description: Is your feature request related to a problem? Please describe.
+      description: Describe the problem or gap this feature addresses.
       placeholder: I'm always frustrated when...
     validations:
       required: true
@@ -27,7 +33,7 @@ body:
     id: solution
     attributes:
       label: Suggested Solution
-      description: A clear and concise description of what you want to happen.
+      description: Describe the expected behavior, UI, or API shape.
     validations:
       required: true
   - type: textarea
@@ -35,6 +41,11 @@ body:
     attributes:
       label: Alternatives Considered
       description: A clear and concise description of any alternative solutions or features you've considered.
+  - type: textarea
+    id: implementation_notes
+    attributes:
+      label: Implementation Notes
+      description: Include likely modules, file paths, constraints, or risks a contributor should know.
   - type: textarea
     id: context
     attributes:

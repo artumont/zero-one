@@ -6,7 +6,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please provide a clear and concise description of the bug.
+        Please provide enough detail that someone new to the repo can reproduce, debug, and verify the fix.
+
+        Helpful references:
+        - Roadmap: https://github.com/artumont/zero-one/blob/dev/docs/ROADMAP.md
+        - Tauri commands and event docs: https://v2.tauri.app/develop/calling-rust/
+        - Vue guide: https://vuejs.org/guide/introduction.html
+        - Upstream OpenCode README: https://github.com/opencode-ai/opencode
   - type: input
     id: prefix
     attributes:
@@ -19,21 +25,21 @@ body:
     id: description
     attributes:
       label: Current Behavior
-      description: A clear and concise description of what the bug is.
+      description: What actually happens, including any visible error or incorrect output.
     validations:
       required: true
   - type: textarea
     id: expected
     attributes:
       label: Expected Behavior
-      description: A clear and concise description of what you expected to happen.
+      description: What should happen instead.
     validations:
       required: true
   - type: textarea
     id: repro
     attributes:
       label: Reproduction Steps
-      description: Steps to reproduce the behavior.
+      description: Exact steps to reproduce the behavior from a clean state.
       placeholder: |
         1. Go to '...'
         2. Click on '....'
@@ -46,6 +52,15 @@ body:
     attributes:
       label: Logs or Screenshots
       description: Paste any relevant logs or attach screenshots of the issue.
+  - type: textarea
+    id: likely_area
+    attributes:
+      label: Likely Area
+      description: Which package, module, or feature area seems related?
+      placeholder: |
+        - packages/zero-one/src/core/logging.rs
+        - packages/ui/src/App.vue
+        - packages/ui/src-tauri/src/lib.rs
   - type: dropdown
     id: package
     attributes:
@@ -62,6 +77,11 @@ body:
     attributes:
       label: Environment Info
       description: OS version, Rust version, Node version, etc.
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification Notes
+      description: How can someone confirm the fix worked?
   - type: checkboxes
     id: terms
     attributes:

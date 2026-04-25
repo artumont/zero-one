@@ -2,6 +2,17 @@ name: General Task
 description: Track a roadmap item or general development task
 title: "[PREFIX] <short description>"
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for roadmap work. Fill in the missing context so someone new to the repo can understand what to build, where to start, and how to know when it is done.
+
+        Helpful references:
+        - Roadmap: https://github.com/artumont/zero-one/blob/dev/docs/ROADMAP.md
+        - Upstream OpenCode README: https://github.com/opencode-ai/opencode
+        - Tauri docs: https://v2.tauri.app/
+        - Vue docs: https://vuejs.org/guide/introduction.html
+        - Clap docs: https://docs.rs/clap/latest/clap/
   - type: input
     id: prefix
     attributes:
@@ -14,19 +25,40 @@ body:
     id: summary
     attributes:
       label: Task Summary
-      description: Describe the task or roadmap item.
+      description: Describe the task in plain language, including the user-visible outcome or internal capability being built.
     validations:
       required: true
+  - type: textarea
+    id: start_here
+    attributes:
+      label: Where to Start
+      description: Point to the files, modules, docs, or previous issues a contributor should read first.
+      placeholder: |
+        - docs/ROADMAP.md
+        - packages/zero-one/src/main.rs
+        - packages/ui/src/App.vue
+        - Upstream OpenCode README sections on configuration / MCP / tools
   - type: textarea
     id: acceptance_criteria
     attributes:
       label: Acceptance Criteria
-      description: List the criteria for completion.
+      description: List concrete checks that prove the work is done.
       placeholder: |
-        - [ ] Criterion 1
-        - [ ] Criterion 2
+        - [ ] Feature or behavior exists
+        - [ ] It is covered by tests or manual verification steps
+        - [ ] Any docs or examples were updated
+        - [ ] Errors and edge cases are handled
   - type: textarea
-    id: notes
+    id: implementation_notes
     attributes:
-      label: Notes
-      description: Additional implementation details or related issues.
+      label: Implementation Notes
+      description: Add constraints, suggested approach, related issues, migration notes, or known pitfalls.
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Link to any upstream docs, examples, or code paths that explain the work.
+      placeholder: |
+        - https://github.com/opencode-ai/opencode
+        - https://v2.tauri.app/develop/calling-rust/
+        - https://vuejs.org/guide/introduction.html
