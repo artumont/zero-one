@@ -33,7 +33,7 @@ impl Migrator {
     /// Runs the database migrations by determining which migrations need to be applied based on the current state of the database and executing them in the correct order.
     pub async fn run(&self) -> Result<(), Box<dyn std::error::Error>> {
         let execution_chain = self.build_execution_chain()?;
-        if execution_chain.len() == 0 {
+        if execution_chain.is_empty() {
             log::info!("No new migrations to apply. Database is up to date.");
             return Ok(());
         }
