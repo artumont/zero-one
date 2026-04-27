@@ -73,13 +73,17 @@ fn new_creates_migration_tracking_table() {
         == "__z1_migrations";
 
     assert!(found);
+    // Drop all handles before removing the file so the file is not locked (e.g. on Windows).
+    drop(stmt);
+    drop(conn);
+    drop(_migrator);
     std::fs::remove_file(db_path).ok();
 }
 
 #[test]
 fn run_applies_embedded_migrations_and_is_idempotent() {
     let db_path = temp_db_path("run_idempotent");
-    let migrator = Migrator::new(&db_path).expect("failed to construct migrator");
+    let mut migrator = Migrator::new(&db_path).expect("failed to construct migrator");
 
     block_on(migrator.run()).expect("first migration run should succeed");
     block_on(migrator.run()).expect("second migration run should be idempotent");
@@ -103,5 +107,8 @@ fn run_applies_embedded_migrations_and_is_idempotent() {
         assert_eq!(project_table_exists, 1);
     }
 
+    // Drop all handles before removing the file so the file is not locked (e.g. on Windows).
+    drop(conn);
+    drop(migrator);
     std::fs::remove_file(db_path).ok();
 }

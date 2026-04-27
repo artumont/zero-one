@@ -77,7 +77,10 @@ def _default_to_sql(default_attr: str, sql_type: str) -> str:
     if default_attr == "jiff::Timestamp::now()":
         return "CURRENT_TIMESTAMP"
     if default_attr.startswith("\"") and default_attr.endswith("\""):
-        return default_attr
+        # Convert Rust double-quoted string literal to a proper SQL single-quoted string
+        # literal (double quotes are identifiers in SQL, not string literals)
+        inner = default_attr[1:-1].replace("'", "''")
+        return f"'{inner}'"
     if sql_type in {"INTEGER", "REAL"} and re.fullmatch(r"-?\d+(?:\.\d+)?", default_attr):
         return default_attr
     return f"'{default_attr}'"

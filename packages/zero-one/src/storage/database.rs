@@ -16,9 +16,15 @@ pub struct DBManager {
 }
 
 impl DBManager {
-    /// Creates a new `DBManager` instance by connecting to the database at the specified path.
+    /// Creates a new `DBManager` instance. Migrations are run first (before the toasty
+    /// connection is opened) so the schema is always up to date before any ORM code runs
+    /// and to avoid SQLite locking contention between two simultaneous connections.
     async fn new(db_path: PathBuf) -> Result<Self, Box<dyn std::error::Error>> {
-        let migrator = migrator::Migrator::new(&db_path)?;
+        let mut migrator = migrator::Migrator::new(&db_path)?;
+        log::info!("Running database migrations...");
+        migrator.run().await?;
+        log::info!("Database migrations completed successfully.");
+
         let converted_db_path =
             file_path_to_connection_url(db_path.to_str().expect("Invalid database path"));
         let db = toasty::Db::builder()
@@ -29,19 +35,10 @@ impl DBManager {
         log::debug!("Connected to database at: {}", converted_db_path);
         Ok(DBManager { db, migrator })
     }
-
-    pub async fn run_migrations(&self) -> Result<(), Box<dyn std::error::Error>> {
-        log::info!("Running database migrations...");
-        self.migrator.run().await?;
-        log::info!("Database migrations completed successfully.");
-        Ok(())
-    }
 }
 
 /// Asynchronously retrieves a `DBManager` instance connected to the application's database. This function ensures that the database file exists and is ready for use.
 pub async fn get_db_manager() -> Result<DBManager, Box<dyn std::error::Error>> {
     let db_path = ensure_app_database()?;
-    let manager = DBManager::new(db_path).await?;
-    manager.run_migrations().await?;
-    Ok(manager)
+    DBManager::new(db_path).await
 }
