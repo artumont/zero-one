@@ -1,0 +1,9 @@
+BEGIN;
+
+DROP TABLE IF EXISTS "session_message";
+
+DROP TABLE IF EXISTS "session";
+
+DROP TABLE IF EXISTS "project";
+
+COMMIT;
