@@ -54,6 +54,9 @@ impl Migrator {
             let tx = self.conn.transaction()?;
             match tx.execute_batch(&up_sql) {
                 Ok(_) => {
+                    // The INSERT is intentionally inside the same transaction as the migration
+                    // SQL so that both are committed atomically: if commit fails, neither the
+                    // schema change nor the tracking record will be persisted.
                     tx.execute(
                         "INSERT INTO __z1_migrations (checksum) VALUES (?1)",
                         [&checksum],

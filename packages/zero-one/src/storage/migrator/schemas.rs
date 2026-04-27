@@ -14,7 +14,9 @@ pub struct Metadata {
 pub struct DbMigration {
     pub metadata: Metadata, // Metadata from the `metadata` file in the migration folder, e.g., "1777256991_initial_setup/metadata.json"
     pub(crate) up: String, // Contents of the 'up' migration file, e.g., "1777256991_initial_setup/up.sql"
-    #[allow(dead_code)] // Retained for future rollback support
+    // Retained for future downgrade/rollback support; transactions are currently managed
+    // by the Migrator and each migration is rolled back automatically on failure.
+    #[allow(dead_code)]
     pub(crate) down: String, // Contents of the 'down' migration file, e.g., "1777256991_initial_setup/down.sql"
 }
 
