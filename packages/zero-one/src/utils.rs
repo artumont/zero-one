@@ -60,7 +60,7 @@ pub fn ensure_data_directory() -> Result<PathBuf, std::io::Error> {
 /// Ensures that the application database file exists and returns its path. If the file does not exist, it will be created.  
 pub fn ensure_app_database() -> Result<PathBuf, std::io::Error> {
     let data_dir = ensure_data_directory();
-    let db_path = data_dir?.join("zero-one.db");
+    let db_path = data_dir?.join("zero-one.sqlite3");
     if !db_path.exists() {
         std::fs::File::create(&db_path).expect("Failed to create database file");
     }
