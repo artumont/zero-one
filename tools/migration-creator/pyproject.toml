@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "z1-migration-creator"
+version = "0.1.0"
+description = "Automatic migration detection and generation for zero-one"
+authors = ["zero-one contributors"]
+readme = "README.md"
+packages = [{ include = "migration_creator" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.scripts]
+z1-migrate = "migration_creator.cli:main"
+
+[build-system]
+requires = ["poetry-core>=1.8.0"]
+build-backend = "poetry.core.masonry.api"
