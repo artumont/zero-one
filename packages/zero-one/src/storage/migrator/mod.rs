@@ -10,8 +10,9 @@ use std::{
 
 use crate::storage::migrator::{schemas::DbMigration, schemas::Metadata};
 
-static MIGRATIONS_DIR: Dir<'_> = include_dir!("./migrations");
+static MIGRATIONS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/migrations");
 
+/// The `Migrator` struct is responsible for managing database migrations. It maintains a connection to the database and a map of available migrations, allowing it to determine which migrations need to be applied and execute them in the correct order based on their dependencies. The migrator ensures that the necessary table for tracking applied migrations exists in the database and provides functionality to run the migrations asynchronously.
 pub struct Migrator {
     conn: Connection,
     migration_map: BTreeMap<String, DbMigration>,
@@ -77,6 +78,7 @@ impl Migrator {
         Ok(())
     }
 
+    /// Builds the execution chain of migrations that need to be applied by comparing the set of already executed migrations in the database with the available migrations in the migration map and their dependencies. The resulting execution chain is ordered to ensure that all dependencies are applied before the migrations that depend on them.
     fn build_execution_chain(&self) -> Result<Vec<&DbMigration>, Box<dyn std::error::Error>> {
         let mut executed_migrations: BTreeSet<String> = BTreeSet::new();
         let mut stmt = self.conn.prepare("SELECT checksum FROM __z1_migrations")?;
@@ -127,9 +129,14 @@ impl Migrator {
     /// Builds a map of available migrations by reading the embedded migrations directory and parsing the metadata and SQL files for each migration. The map is keyed by the checksum of the migration, allowing for easy lookup when determining which migrations need to be applied.
     fn build_migration_map() -> Result<BTreeMap<String, DbMigration>, Box<dyn std::error::Error>> {
         let mut migrations: BTreeMap<String, DbMigration> = BTreeMap::new();
-        for entry in MIGRATIONS_DIR.entries() {
-            if let Some(folder) = entry.as_dir() {
-                let metadata_file = folder.get_file("metadata.json").ok_or_else(|| {
+        for folder in MIGRATIONS_DIR.dirs() {
+            let metadata_path = format!("{}/metadata.json", folder.path().display());
+            let up_path = format!("{}/up.sql", folder.path().display());
+            let down_path = format!("{}/down.sql", folder.path().display());
+            let metadata_file = folder
+                .get_file("metadata.json")
+                .or_else(|| MIGRATIONS_DIR.get_file(metadata_path.as_str()))
+                .ok_or_else(|| {
                     io::Error::new(
                         io::ErrorKind::NotFound,
                         format!(
@@ -138,17 +145,20 @@ impl Migrator {
                         ),
                     )
                 })?;
-                let metadata_content = metadata_file.contents_utf8().ok_or_else(|| {
-                    io::Error::new(
-                        io::ErrorKind::InvalidData,
-                        format!(
-                            "Invalid UTF-8 in metadata.json for migration: {}",
-                            folder.path().display()
-                        ),
-                    )
-                })?;
-                let metadata: Metadata = serde_json::from_str(metadata_content)?;
-                let up_file = folder.get_file("up.sql").ok_or_else(|| {
+            let metadata_content = metadata_file.contents_utf8().ok_or_else(|| {
+                io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    format!(
+                        "Invalid UTF-8 in metadata.json for migration: {}",
+                        folder.path().display()
+                    ),
+                )
+            })?;
+            let metadata: Metadata = serde_json::from_str(metadata_content)?;
+            let up_file = folder
+                .get_file("up.sql")
+                .or_else(|| MIGRATIONS_DIR.get_file(up_path.as_str()))
+                .ok_or_else(|| {
                     io::Error::new(
                         io::ErrorKind::NotFound,
                         format!(
@@ -157,7 +167,10 @@ impl Migrator {
                         ),
                     )
                 })?;
-                let down_file = folder.get_file("down.sql").ok_or_else(|| {
+            let down_file = folder
+                .get_file("down.sql")
+                .or_else(|| MIGRATIONS_DIR.get_file(down_path.as_str()))
+                .ok_or_else(|| {
                     io::Error::new(
                         io::ErrorKind::NotFound,
                         format!(
@@ -166,29 +179,28 @@ impl Migrator {
                         ),
                     )
                 })?;
-                let up_sql = up_file.contents_utf8().ok_or_else(|| {
-                    io::Error::new(
-                        io::ErrorKind::InvalidData,
-                        format!(
-                            "Invalid UTF-8 in up.sql for migration: {}",
-                            folder.path().display()
-                        ),
-                    )
-                })?;
-                let down_sql = down_file.contents_utf8().ok_or_else(|| {
-                    io::Error::new(
-                        io::ErrorKind::InvalidData,
-                        format!(
-                            "Invalid UTF-8 in down.sql for migration: {}",
-                            folder.path().display()
-                        ),
-                    )
-                })?;
-                migrations.insert(
-                    metadata.checksum.clone(),
-                    DbMigration::new(metadata, up_sql.to_string(), down_sql.to_string()),
-                );
-            }
+            let up_sql = up_file.contents_utf8().ok_or_else(|| {
+                io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    format!(
+                        "Invalid UTF-8 in up.sql for migration: {}",
+                        folder.path().display()
+                    ),
+                )
+            })?;
+            let down_sql = down_file.contents_utf8().ok_or_else(|| {
+                io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    format!(
+                        "Invalid UTF-8 in down.sql for migration: {}",
+                        folder.path().display()
+                    ),
+                )
+            })?;
+            migrations.insert(
+                metadata.checksum.clone(),
+                DbMigration::new(metadata, up_sql.to_string(), down_sql.to_string()),
+            );
         }
         Ok(migrations)
     }

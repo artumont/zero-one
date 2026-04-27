@@ -67,7 +67,6 @@ pub fn ensure_app_database() -> Result<PathBuf, std::io::Error> {
     Ok(db_path)
 }
 
-
 pub fn ensure_zero_one_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
     let current_dir = std::env::current_dir()?;
     let zero_one_dir = current_dir.join(".zero-one");
