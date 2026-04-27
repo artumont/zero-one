@@ -1,8 +1,6 @@
-pub mod migration;
 pub mod project;
 pub mod session;
 
-pub use migration::Migration;
 pub use project::Project;
 pub use session::{Session, SessionMessage};
 
@@ -11,7 +9,6 @@ pub use session::{Session, SessionMessage};
 macro_rules! storage_models {
     () => {
         toasty::models!(
-            $crate::storage::models::Migration,
             $crate::storage::models::Project,
             $crate::storage::models::Session,
             $crate::storage::models::SessionMessage,

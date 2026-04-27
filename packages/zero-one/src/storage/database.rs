@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::utils::ensure_app_database;
+use crate::{storage::migrator, utils::ensure_app_database};
 
 fn file_path_to_connection_url(path: &str) -> String {
     if cfg!(target_os = "windows") {
@@ -12,11 +12,13 @@ fn file_path_to_connection_url(path: &str) -> String {
 
 pub struct DBManager {
     pub db: toasty::Db,
+    pub migrator: migrator::Migrator,
 }
 
 impl DBManager {
     /// Creates a new `DBManager` instance by connecting to the database at the specified path.
-    async fn new(db_path: PathBuf) -> Self {
+    async fn new(db_path: PathBuf) -> Result<Self, Box<dyn std::error::Error>> {
+        let migrator = migrator::Migrator::new(&db_path)?;
         let converted_db_path =
             file_path_to_connection_url(db_path.to_str().expect("Invalid database path"));
         let db = toasty::Db::builder()
@@ -24,14 +26,14 @@ impl DBManager {
             .connect(&converted_db_path)
             .await
             .expect("Failed to connect to database");
-        DBManager { db }
+        log::debug!("Connected to database at: {}", converted_db_path);
+        Ok(DBManager { db, migrator })
     }
 
-    pub async fn execute_migrations(&self) -> Result<(), Box<dyn std::error::Error>> {
-        // Implement migration logic here, e.g., using embedded SQL files or a migration library.
-        // For example:
-        // let migration_sql = include_str!("migrations/001_create_tables.sql");
-        // self.db.execute(migration_sql).await?;
+    pub async fn run_migrations(&self) -> Result<(), Box<dyn std::error::Error>> {
+        log::info!("Running database migrations...");
+        self.migrator.run().await?;
+        log::info!("Database migrations completed successfully.");
         Ok(())
     }
 }
@@ -39,5 +41,7 @@ impl DBManager {
 /// Asynchronously retrieves a `DBManager` instance connected to the application's database. This function ensures that the database file exists and is ready for use.
 pub async fn get_db_manager() -> Result<DBManager, Box<dyn std::error::Error>> {
     let db_path = ensure_app_database()?;
-    Ok(DBManager::new(db_path).await)
+    let manager = DBManager::new(db_path).await?;
+    manager.run_migrations().await?;
+    Ok(manager)
 }
